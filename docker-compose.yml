@@ -11,13 +11,66 @@ services:
     networks:
       - ticketmei-net
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # Porta AMQP
+      - "15672:15672"  # Dashboard Web de gestão
+      - "15692:15692"  # Endpoint de métricas Prometheus
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    command: >
+      sh -c "rabbitmq-plugins enable rabbitmq_prometheus && rabbitmq-server"
+    networks:
+      - ticketmei-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  order:
+    build: ./order
+    container_name: order
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ticketmei-net    
+
+  notification:
+    build: ./notification
+    container_name: notification
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ticketmei-net
+
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
     ports:
       - "8000:8000"
+    environment:
+      - PORT=8000
+      - CATALOG_URL=http://catalog:8001
+      - ORDER_URL=http://order:8002
     depends_on:
       - catalog
+      - order
     networks:
       - ticketmei-net
 
