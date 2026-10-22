@@ -2,8 +2,10 @@ const express = require('express');
 const client = require('prom-client');
 
 const app = express();
+app.use(express.json());
 const PORT = 8000;
 const CATALOG_URL = process.env.CATALOG_URL || 'http://catalog:8001';
+const ORDER_URL = process.env.ORDER_URL || 'http://order:8002';
 
 // Métricas pedidas no eneunciado
 const gatewayRequestsTotal = new client.Counter({
@@ -57,6 +59,31 @@ app.get('/events/:id', async (req, res) => {
   }
 });
 
+// Encaminhamento síncrono para o Order
+app.post('/orders', async (req, res) => {
+  try {
+    const response = await fetch(`${ORDER_URL}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    res.status(502).json({ error: 'Erro de comunicacao com o Order' });
+  }
+});
+
+app.get('/orders/:id', async (req, res) => {
+  try {
+    const response = await fetch(`${ORDER_URL}/orders/${req.params.id}`);
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    res.status(502).json({ error: 'Erro de comunicacao com o Order' });
+  }
+});
+
 // Endpoint de métricas para o Prometheus
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType);
@@ -65,7 +92,7 @@ app.get('/metrics', async (req, res) => {
 
 // Endpoint raiz para verificar se o serviço está ativo
 app.get('/', (req, res) => {
-  res.send('Serviço ativo! Consulta os endpoints em /events ou /metrics.');
+  res.send('Serviço ativo! Consulta os endpoints em <a href="/events">/events</a>, <a href="/metrics">/metrics</a> ou <a href="/orders">/orders</a>.');
 });
 
 app.listen(PORT, () => {
