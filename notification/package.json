@@ -1,0 +1,14 @@
+{
+  "name": "rabbitmq-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RabbitMQ notification worker with Prometheus metrics",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.8",
+    "prom-client": "^15.1.3"
+  }
+}

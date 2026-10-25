@@ -68,6 +68,11 @@ app.post('/orders', (req, res) => {
   };
 
   if (rabbitChannel) {
+	  
+	console.log("SENDING RABBITMQ MESSAGE")
+	console.log("ON QUEUE:")
+	console.log(QUEUE_NAME)
+	  
     rabbitChannel.sendToQueue(
       QUEUE_NAME,
       Buffer.from(JSON.stringify(messagePayload)),
