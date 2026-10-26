@@ -72,8 +72,8 @@ const notificationsProcessed = new client.Counter({
 });
 
 // Explicitly initialize both labeled time series.
-notificationsProcessed.labels("success").inc(0);
-notificationsProcessed.labels("failure").inc(0);
+notificationsProcessed.labels("SENT").inc(0);
+notificationsProcessed.labels("FAILED").inc(0);
 
 const notificationProcessingDuration = new client.Histogram({
   name: "notification_processing_duration_seconds",
@@ -88,6 +88,8 @@ const notificationProcessingDuration = new client.Histogram({
 
 async function sendEmail(email, subject, body) {
   // Simulate sending an email without an external email provider.
+  await sleep(100);
+
   console.log("--------------------------------------------------");
   console.log("SIMULATED EMAIL");
   console.log("To:", email);
@@ -246,7 +248,7 @@ async function startWorker() {
           const endTimer =
             notificationProcessingDuration.startTimer();
 
-          let status = "failure";
+          let status = "FAILED";
 
           try {
             const messagePayload = JSON.parse(
@@ -256,7 +258,7 @@ async function startWorker() {
             await processMessage(messagePayload);
 
             channel.ack(msg);
-            status = "success";
+            status = "SENT";
           } catch (error) {
             console.error("Notification processing failed:", error);
 
