@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const client = require('prom-client');
+client.collectDefaultMetrics();
 
 const app = express();
 const PORT = 8001;

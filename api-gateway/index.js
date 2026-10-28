@@ -1,5 +1,6 @@
 const express = require('express');
 const client = require('prom-client');
+client.collectDefaultMetrics();
 
 const app = express();
 app.use(express.json());

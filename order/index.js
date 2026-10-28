@@ -1,6 +1,7 @@
 const express = require('express');
 const amqp = require('amqplib');
 const client = require('prom-client');
+client.collectDefaultMetrics();
 
 const app = express();
 app.use(express.json());
