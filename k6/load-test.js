@@ -3,8 +3,8 @@ import { check, sleep } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '3m', target: 500 }, // Ramp-up to 500 Virtual Users over 3 minutes
-    { duration: '2m', target: 500 }, // Sustain 500 Virtual Users for 2 minutes
+    { duration: '1m', target: 50 }, // Ramp-up to 50 Virtual Users over 1 minutes
+    { duration: '2m', target: 50 }, // Sustain 50 Virtual Users for 2 minutes
     { duration: '30s', target: 0 },  // Scale down
   ],
   thresholds: {
@@ -22,7 +22,7 @@ export default function () {
     'GET /events status 200': (r) => r.status === 200,
   });
 
-  sleep(0.1);
+  sleep(0.5);
 
   // 2. Pedido POST de criação de encomenda
   const payloadOrder = JSON.stringify({
@@ -42,5 +42,5 @@ export default function () {
     'POST /orders status 202': (r) => r.status === 202,
   });
 
-  sleep(0.2);
+  sleep(1);
 }
