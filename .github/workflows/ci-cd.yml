@@ -17,11 +17,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
       - name: Prepare Repository Name in Lowercase
-        id: repo
         run: |
           echo "IMAGE_NAME=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')/${{ matrix.service }}" >> $GITHUB_ENV
 
@@ -43,7 +40,7 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.IMAGE_NAME }}:latest
-            
+
   update-manifests:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -52,11 +49,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Update Image Tags in Kubernetes Manifests
         run: |
-          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          
+          mkdir -p k8s
+
           for svc in api-gateway catalog order notification; do
             if [ -f "k8s/${svc}-deployment.yaml" ]; then
               sed -i -E "s|(image: ghcr.io/[^:]+/${svc}:).*|\1${{ github.sha }}|" k8s/${svc}-deployment.yaml
@@ -67,11 +65,13 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add k8s/ || true
           
-          git add k8s/
           if git diff --staged --quiet; then
-            echo "Nenhuma alteração nos manifestos."
+            echo "Nenhuma alteração nos manifestos para commitar."
           else
             git commit -m "chore(gitops): update image tags to ${{ github.sha }} [skip ci]"
+            git pull --rebase origin main
             git push origin main
           fi
