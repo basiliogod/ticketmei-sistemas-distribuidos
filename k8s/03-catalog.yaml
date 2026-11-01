@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog
+  namespace: ticketmei
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog
+  template:
+    metadata:
+      labels:
+        app: catalog
+    spec:
+      containers:
+      - name: catalog
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/catalog:latest
+        ports:
+        - containerPort: 8001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog
+  namespace: ticketmei
+spec:
+  type: ClusterIP
+  selector:
+    app: catalog
+  ports:
+  - port: 8001
+    targetPort: 8001

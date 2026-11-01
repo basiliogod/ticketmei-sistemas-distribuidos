@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+  namespace: ticketmei
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      containers:
+      - name: notification
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/notification:latest
+        ports:
+        - containerPort: 8003
+        env:
+        - name: PORT
+          value: "8003"
+        - name: RABBITMQ_URL
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: RABBITMQ_URL
+      initContainers:
+      - name: wait-for-rabbitmq
+        image: busybox:latest
+        command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 1; done;']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification
+  namespace: ticketmei
+spec:
+  type: ClusterIP
+  selector:
+    app: notification
+  ports:
+  - port: 8003
+    targetPort: 8003

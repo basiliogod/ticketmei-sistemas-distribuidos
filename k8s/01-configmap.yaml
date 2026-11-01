@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+  namespace: ticketmei
+data:
+  RABBITMQ_DEFAULT_USER: "guest"
+  RABBITMQ_DEFAULT_PASS: "guest"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-env
+  namespace: ticketmei
+data:
+  ORDER_PORT: "8002"
+  NOTIFICATION_PORT: "8003"
+  API_GATEWAY_PORT: "8000"
+  CATALOG_PORT: "8001"
+  RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5672"
+  CATALOG_URL: "http://catalog:8001"
+  ORDER_URL: "http://order:8002"
