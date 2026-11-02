@@ -111,9 +111,11 @@ services:
     working_dir: /ci-scripts
     volumes:
       - ./k6:/ci-scripts
+    environment:
+      - BASE_URL=http://host.docker.internal:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: run load-test.js
-    depends_on:
-      - api-gateway
     networks:
       - ticketmei-net
     profiles:

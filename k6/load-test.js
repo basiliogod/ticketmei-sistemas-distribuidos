@@ -14,7 +14,7 @@ export const options = {
 };
 
 export default function () {
-  const BASE_URL = 'http://api-gateway:8000';
+  const BASE_URL = __ENV.BASE_URL || 'http://localhost:8000';
 
   // 1. Pedido GET de consulta de eventos (Catalog)
   const resEvents = http.get(`${BASE_URL}/events`);
