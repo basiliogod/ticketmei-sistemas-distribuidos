@@ -1,14 +1,67 @@
 const express = require('express');
 const client = require('prom-client');
+const Redis = require('ioredis');
+
 client.collectDefaultMetrics();
 
 const app = express();
 app.use(express.json());
+
 const PORT = 8000;
 const CATALOG_URL = process.env.CATALOG_URL || 'http://catalog:8001';
 const ORDER_URL = process.env.ORDER_URL || 'http://order:8002';
 
-// Métricas pedidas no eneunciado
+// Configuração do cliente Redis para o Rate Limiter
+const redisClient = new Redis({
+  host: process.env.REDIS_HOST || '127.0.0.1',
+  port: process.env.REDIS_PORT || 6379,
+});
+
+const WINDOW_SIZE_IN_SECONDS = 60; // Janela de 1 minuto
+const MAX_REQUESTS = 100;          // Limite máximo de requisições por IP
+
+// Middleware do Rate Limiter com Redis
+const rateLimiter = async (req, res, next) => {
+  // Ignorar o endpoint de métricas para o Prometheus não ser limitado
+  if (req.path === '/metrics') return next();
+
+  try {
+    const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+    const key = `ratelimit:${ip}`;
+
+    // Incrementa de forma atômica no Redis
+    const requests = await redisClient.incr(key);
+
+    if (requests === 1) {
+      await redisClient.expire(key, WINDOW_SIZE_IN_SECONDS);
+    }
+
+    const ttl = await redisClient.ttl(key);
+
+    // Cabeçalhos informativos padrão da indústria
+    res.setHeader('X-RateLimit-Limit', MAX_REQUESTS);
+    res.setHeader('X-RateLimit-Remaining', Math.max(0, MAX_REQUESTS - requests));
+
+    if (requests > MAX_REQUESTS) {
+      return res.status(429).json({
+        error: 'Too Many Requests',
+        message: 'Limite de requisições excedido. Tente novamente mais tarde.',
+        retryAfterSeconds: ttl,
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Erro no Rate Limiter (Redis):', error);
+    // Fail-open: Se o Redis falhar, deixa passar a requisição para o sistema não abaixo
+    next();
+  }
+};
+
+// Aplicar o Rate Limiter globalmente
+app.use(rateLimiter);
+
+// Métricas pedidas no enunciado
 const gatewayRequestsTotal = new client.Counter({
   name: 'gateway_requests_total',
   help: 'Total de pedidos recebidos pelo gateway',
