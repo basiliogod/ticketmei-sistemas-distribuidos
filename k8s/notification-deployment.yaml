@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: notification
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/notification:latest
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/notification:a3915f7e31331b3c28800819d0466288c2f5e5d0
         ports:
         - containerPort: 8003
         env:
