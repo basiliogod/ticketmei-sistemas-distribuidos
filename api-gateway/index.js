@@ -93,7 +93,7 @@ app.get('/metrics', async (req, res) => {
 
 // Endpoint raiz para verificar se o serviço está ativo
 app.get('/', (req, res) => {
-  res.send('Serviço ativo! Consulta os endpoints em <a href="/events">/events</a>, <a href="/metrics">/metrics</a> ou <a href="/orders/:0">/orders</a>.');
+  res.send('Serviço ativo! Consulta os endpoints em <a href="/events">/events</a>, <a href="/metrics">/metrics</a> ou <a href="/orders">/orders</a>.');
 });
 
 app.listen(PORT, () => {

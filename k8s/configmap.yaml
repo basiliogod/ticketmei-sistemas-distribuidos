@@ -20,3 +20,4 @@ data:
   RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5672"
   CATALOG_URL: "http://catalog:8001"
   ORDER_URL: "http://order:8002"
+  REDIS_URL: "redis://redis:6379"

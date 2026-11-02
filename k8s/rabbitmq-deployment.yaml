@@ -44,8 +44,8 @@ spec:
             - rabbitmq-diagnostics
             - -q
             - ping
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          initialDelaySeconds: 15
+          periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 5
 ---

@@ -6,17 +6,26 @@ metadata:
 data:
   prometheus.yml: |
     global:
-      scrape_interval: 15s
+      scrape_interval: 5s
     scrape_configs:
       - job_name: 'prometheus'
         static_configs:
           - targets: ['localhost:9090']
+      - job_name: 'api-gateway'
+        static_configs:
+          - targets: ['api-gateway:8000']
+      - job_name: 'catalog'
+        static_configs:
+          - targets: ['catalog:8001']
+      - job_name: 'order'
+        static_configs:
+          - targets: ['order:8002']
+      - job_name: 'notification'
+        static_configs:
+          - targets: ['notification:8003']
       - job_name: 'rabbitmq'
         static_configs:
           - targets: ['rabbitmq:15692']
-      - job_name: 'cadvisor'
-        static_configs:
-          - targets: ['cadvisor:8080']
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,7 +61,7 @@ metadata:
   name: prometheus
   namespace: ticketmei
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: prometheus
   ports:
