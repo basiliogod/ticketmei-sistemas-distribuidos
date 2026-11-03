@@ -24,7 +24,7 @@ redisClient.on('connect', () => console.log('Ligado com sucesso ao Redis!'));
 redisClient.on('error', (err) => console.error('Erro na ligação ao Redis:', err.message));
 
 const WINDOW_SIZE_IN_SECONDS = 60; // Janela de 1 minuto
-const MAX_REQUESTS = 500;          // Limite máximo de requisições por IP
+const MAX_REQUESTS = 50;          // Limite máximo de requisições por IP
 
 // Middleware do Rate Limiter com Redis
 const rateLimiter = async (req, res, next) => {

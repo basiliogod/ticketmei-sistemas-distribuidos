@@ -37,7 +37,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -121,7 +121,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(rate(process_cpu_seconds_total{job=~\"api-gateway|catalog|order|notification\"}[1m])) by (job) * 100",
@@ -138,7 +138,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -217,7 +217,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "process_resident_memory_bytes{job=~\"api-gateway|catalog|order|notification\"}",
@@ -246,7 +246,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -326,7 +326,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(rate(gateway_requests_total[1m]))",
@@ -343,7 +343,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -426,7 +426,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum(rate(gateway_request_duration_seconds_bucket[1m])) by (le))",
@@ -439,7 +439,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.99, sum(rate(gateway_request_duration_seconds_bucket[1m])) by (le))",
@@ -456,7 +456,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -515,7 +515,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "(sum(rate(gateway_requests_total{http_status=~\"5..\"}[1m])) or vector(0)) / (sum(rate(gateway_requests_total[1m])) > 0) * 100 or vector(0)",
@@ -532,7 +532,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -615,7 +615,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(rate(gateway_requests_total{http_status=\"429\"}[1m])) or vector(0)",
@@ -644,7 +644,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -724,7 +724,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(rate(catalog_requests_total[1m])) by (endpoint)",
@@ -741,7 +741,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -820,7 +820,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum(rate(catalog_request_duration_seconds_bucket[1m])) by (le))",
@@ -849,7 +849,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -928,7 +928,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(orders_initiated_total) by (status)",
@@ -945,7 +945,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -994,7 +994,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(rate(orders_initiated_total[1m])) or vector(0)",
@@ -1023,7 +1023,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -1102,7 +1102,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "sum(notifications_processed_total) by (status)",
@@ -1119,7 +1119,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -1198,7 +1198,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum(rate(notification_processing_duration_seconds_bucket[1m])) by (le))",
@@ -1215,7 +1215,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+        "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
       },
       "fieldConfig": {
         "defaults": {
@@ -1294,7 +1294,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b23f12b2-46b1-4ef6-948e-9a17a9bc98ee"
+            "uid": "e0b8e8bd-784e-41fe-88d0-2406cb43be89"
           },
           "editorMode": "code",
           "expr": "rabbitmq_queue_messages{job=\"rabbitmq\"}",

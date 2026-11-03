@@ -4,8 +4,8 @@ import { check, sleep } from 'k6';
 export const options = {
   stages: [
     { duration: '30s', target: 20 }, // Ramp-up to 20 Virtual Users over 30 seconds
-    { duration: '1m', target: 50 }, // Sustain 50 Virtual Users for 1 minutes
-    { duration: '20s', target: 0 },  // Scale down
+    { duration: '30s', target: 80 }, // Sustain 500 Virtual Users for 2 minutes
+    { duration: '30s', target: 0 },  // Scale down
   ],
   thresholds: {
     http_req_duration: ['p(95)<200'], // 95% of requests must complete below 200ms
