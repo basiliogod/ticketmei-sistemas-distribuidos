@@ -41,5 +41,5 @@ export default function () {
     'POST /orders status is 202 or 429 (Rate Limited)': (r) => r.status === 202 || r.status === 429,
   });
 
-  sleep(1);
+  sleep(0.5);
 }
