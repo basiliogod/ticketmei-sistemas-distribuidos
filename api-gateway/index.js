@@ -10,20 +10,26 @@ app.use(express.json());
 const PORT = 8000;
 const CATALOG_URL = process.env.CATALOG_URL || 'http://catalog:8001';
 const ORDER_URL = process.env.ORDER_URL || 'http://order:8002';
+const REDIS_URL = process.env.REDIS_URL || 'redis://redis:6379';
 
 // Configuração do cliente Redis para o Rate Limiter
-const redisClient = new Redis({
-  host: process.env.REDIS_HOST || '127.0.0.1',
-  port: process.env.REDIS_PORT || 6379,
+const redisClient = new Redis(REDIS_URL, {
+  maxRetriesPerRequest: 3,
+  retryStrategy(times) {
+    return Math.min(times * 50, 2000);
+  }
 });
 
+redisClient.on('connect', () => console.log('Ligado com sucesso ao Redis!'));
+redisClient.on('error', (err) => console.error('Erro na ligação ao Redis:', err.message));
+
 const WINDOW_SIZE_IN_SECONDS = 60; // Janela de 1 minuto
-const MAX_REQUESTS = 100;          // Limite máximo de requisições por IP
+const MAX_REQUESTS = 50;          // Limite máximo de requisições por IP
 
 // Middleware do Rate Limiter com Redis
 const rateLimiter = async (req, res, next) => {
   // Ignorar o endpoint de métricas para o Prometheus não ser limitado
-  if (req.path === '/metrics') return next();
+  if (req.path === '/metrics' || req.path === '/') return next();
 
   try {
     const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
@@ -53,13 +59,10 @@ const rateLimiter = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Erro no Rate Limiter (Redis):', error);
-    // Fail-open: Se o Redis falhar, deixa passar a requisição para o sistema não abaixo
     next();
   }
 };
 
-// Aplicar o Rate Limiter globalmente
-app.use(rateLimiter);
 
 // Métricas pedidas no enunciado
 const gatewayRequestsTotal = new client.Counter({
@@ -91,6 +94,9 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+// Aplicar o Rate Limiter globalmente
+app.use(rateLimiter);
 
 // Encaminhamento síncrono para o Catalog
 app.get('/events', async (req, res) => {

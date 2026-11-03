@@ -59,7 +59,6 @@ services:
     networks:
       - ticketmei-net
 
-  # === NOVO: Serviço Redis para o Rate Limiter ===
   redis:
     image: redis:alpine
     container_name: redis
@@ -78,12 +77,11 @@ services:
       - PORT=8000
       - CATALOG_URL=http://catalog:8001
       - ORDER_URL=http://order:8002
-      - REDIS_HOST=redis     # <-- Adicionado para o Rate Limiter
-      - REDIS_PORT=6379     # <-- Adicionado para o Rate Limiter
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - catalog
       - order
-      - redis               # <-- Garantir que o Redis arranca antes do gateway
+      - redis
     networks:
       - ticketmei-net
 
