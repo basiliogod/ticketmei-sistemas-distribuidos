@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/api-gateway:bfb632f2ba1e9528a7a7f2a4fec7bdbf10460bab
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/api-gateway:bedac5f8ba924abe7d7b6ca29aac473926eaeca6
         ports:
         - containerPort: 8000
         env:
