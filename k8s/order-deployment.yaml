@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: order
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/order:8afdc316cafbf71ba91c9d0ce862f7b9e62a141c
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/order:a1ab6e6cec56e7ad67fd9c2ab309a48fe42cd167
         ports:
         - containerPort: 8002
         env:
