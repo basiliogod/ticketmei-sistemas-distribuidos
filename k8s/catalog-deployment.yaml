@@ -18,6 +18,13 @@ spec:
         image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/catalog:a1ab6e6cec56e7ad67fd9c2ab309a48fe42cd167
         ports:
         - containerPort: 8001
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service

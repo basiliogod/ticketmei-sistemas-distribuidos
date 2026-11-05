@@ -34,6 +34,13 @@ spec:
             configMapKeyRef:
               name: rabbitmq-config
               key: RABBITMQ_DEFAULT_PASS
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
         command:
         - sh
         - -c

@@ -9,11 +9,35 @@ permissions:
   packages: write
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Detect Changes per Service
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api-gateway:
+              - 'api-gateway/**'
+            catalog:
+              - 'catalog/**'
+            order:
+              - 'order/**'
+            notification:
+              - 'notification/**'
+
   build-and-push:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.services != '[]' && needs.detect-changes.outputs.services != '' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [api-gateway, catalog, order, notification]
+        service: ${{ fromJSON(needs.detect-changes.outputs.services) }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -42,7 +66,8 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
 
   update-manifests:
-    needs: build-and-push
+    needs: [detect-changes, build-and-push]
+    if: ${{ needs.detect-changes.outputs.services != '[]' && needs.detect-changes.outputs.services != '' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -51,13 +76,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Update Image Tags in Kubernetes Manifests
+      - name: Update Only Changed Services in Kubernetes Manifests
+        env:
+          CHANGED_SERVICES: ${{ needs.detect-changes.outputs.services }}
         run: |
           mkdir -p k8s
+          echo "Serviços alterados: $CHANGED_SERVICES"
 
-          for svc in api-gateway catalog order notification; do
-            if [ -f "k8s/${svc}-deployment.yaml" ]; then
-              sed -i -E "s|(image: ghcr.io/[^:]+/${svc}:).*|\1${{ github.sha }}|" k8s/${svc}-deployment.yaml
+          for svc in $(echo "$CHANGED_SERVICES" | jq -r '.[]'); do
+            MANIFEST="k8s/${svc}-deployment.yaml"
+            if [ -f "$MANIFEST" ]; then
+              echo "Atualizando tag de $svc para ${{ github.sha }} em $MANIFEST"
+              sed -i -E "s|(image: ghcr.io/[^:]+/${svc}:).*|\1${{ github.sha }}|" "$MANIFEST"
             fi
           done
 
@@ -71,7 +101,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "Nenhuma alteração nos manifestos para commitar."
           else
-            git commit -m "chore(gitops): update image tags to ${{ github.sha }} [skip ci]"
+            git commit -m "chore(gitops): update image tags for ${{ needs.detect-changes.outputs.services }} to ${{ github.sha }} [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi

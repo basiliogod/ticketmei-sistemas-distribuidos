@@ -35,7 +35,14 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: service-env
-              key: REDIS_URL      
+              key: REDIS_URL   
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi         
       initContainers:
       - name: wait-for-catalog
         image: busybox:latest
