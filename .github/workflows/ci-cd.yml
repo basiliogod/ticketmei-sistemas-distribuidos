@@ -30,6 +30,8 @@ jobs:
               - 'order/**'
             notification:
               - 'notification/**'
+            payment:
+              - 'payment/**'  
 
   build-and-push:
     needs: detect-changes

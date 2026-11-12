@@ -31,6 +31,16 @@ services:
       timeout: 5s
       retries: 5
 
+  payment:
+    build: ./payment
+    container_name: payment
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+    networks:
+      - ticketmei-net
+
   order:
     build: ./order
     container_name: order
@@ -39,9 +49,12 @@ services:
     environment:
       - PORT=8002
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - PAYMENT_URL=http://payment:8004
     depends_on:
       rabbitmq:
         condition: service_healthy
+      payment:
+        condition: service_started
     networks:
       - ticketmei-net    
 
@@ -125,6 +138,7 @@ services:
       - ./k6:/ci-scripts
     environment:
       - BASE_URL=http://host.docker.internal:8000
+      - PAYMENT_URL=http://host.docker.internal:8004
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: run load-test.js

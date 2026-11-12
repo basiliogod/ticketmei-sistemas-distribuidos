@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  namespace: ticketmei
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: payment
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/payment:latest
+        ports:
+        - containerPort: 8004
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: PAYMENT_PORT
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  namespace: ticketmei
+spec:
+  type: ClusterIP
+  selector:
+    app: payment
+  ports:
+  - port: 8004
+    targetPort: 8004

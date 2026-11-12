@@ -30,6 +30,11 @@ spec:
         env:
         - name: PORT
           value: "8002"
+        - name: PAYMENT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: PAYMENT_URL
         - name: RABBITMQ_HOST
           value: "rabbitmq.rabbitmq-system.svc.cluster.local"
         - name: RABBITMQ_VHOST

@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  namespace: grupo09
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: payment
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/payment:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 8004
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: PAYMENT_PORT
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  namespace: grupo09
+  labels:
+    app: payment
+spec:
+  type: ClusterIP
+  selector:
+    app: payment
+  ports:
+  - name: metrics
+    port: 8004
+    targetPort: 8004
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment-monitor
+  namespace: grupo09
+  labels:
+    release: kube-prometheus-stack-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: payment
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 60s
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scrape-payment
+  namespace: grupo09
+spec:
+  podSelector:
+    matchLabels:
+      app: payment
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8004
