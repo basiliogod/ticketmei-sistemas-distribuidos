@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+  namespace: grupo09
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: notification
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/notification:a1ab6e6cec56e7ad67fd9c2ab309a48fe42cd167
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 8003
+        env:
+        - name: PORT
+          value: "8003"
+        - name: RABBITMQ_HOST
+          value: "rabbitmq.rabbitmq-system.svc.cluster.local"
+        - name: RABBITMQ_VHOST
+          value: "/grupo09"
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: grupo09-user-user-credentials
+              key: username
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: grupo09-user-user-credentials
+              key: password
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification
+  namespace: grupo09
+  labels:
+    app: notification
+spec:
+  type: ClusterIP
+  selector:
+    app: notification
+  ports:
+  - name: metrics
+    port: 8003
+    targetPort: 8003
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: notification-monitor
+  namespace: grupo09
+  labels:
+    release: kube-prometheus-stack-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: notification
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 60s
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scrape-notification
+  namespace: grupo09
+spec:
+  podSelector:
+    matchLabels:
+      app: notification
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8003

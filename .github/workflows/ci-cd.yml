@@ -80,14 +80,17 @@ jobs:
         env:
           CHANGED_SERVICES: ${{ needs.detect-changes.outputs.services }}
         run: |
-          mkdir -p k8s
           echo "Serviços alterados: $CHANGED_SERVICES"
 
-          for svc in $(echo "$CHANGED_SERVICES" | jq -r '.[]'); do
-            MANIFEST="k8s/${svc}-deployment.yaml"
-            if [ -f "$MANIFEST" ]; then
-              echo "Atualizando tag de $svc para ${{ github.sha }} em $MANIFEST"
-              sed -i -E "s|(image: ghcr.io/[^:]+/${svc}:).*|\1${{ github.sha }}|" "$MANIFEST"
+          for dir in k8s-local k8s-global; do
+            if [ -d "$dir" ]; then
+              for svc in $(echo "$CHANGED_SERVICES" | jq -r '.[]'); do
+                MANIFEST="${dir}/${svc}-deployment.yaml"
+                if [ -f "$MANIFEST" ]; then
+                  echo "Atualizando tag de $svc para ${{ github.sha }} em $MANIFEST"
+                  sed -i -E "s|(image: ghcr.io/[^:]+/${svc}:).*|\1${{ github.sha }}|" "$MANIFEST"
+                fi
+              done
             fi
           done
 
@@ -96,7 +99,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add k8s/ || true
+          git add k8s-local/ k8s-global/ || true
           
           if git diff --staged --quiet; then
             echo "Nenhuma alteração nos manifestos para commitar."

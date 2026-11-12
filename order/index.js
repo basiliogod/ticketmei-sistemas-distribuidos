@@ -7,7 +7,9 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 8002;
-const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672';
+const RABBITMQ_URL = process.env.RABBITMQ_HOST
+  ? `amqp://${encodeURIComponent(process.env.RABBITMQ_USER)}:${encodeURIComponent(process.env.RABBITMQ_PASSWORD)}@${process.env.RABBITMQ_HOST}:5672${encodeURIComponent(process.env.RABBITMQ_VHOST)}`
+  : (process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672');
 const QUEUE_NAME = 'order_notifications';
 
 // Métrica exigida para o Prometheus

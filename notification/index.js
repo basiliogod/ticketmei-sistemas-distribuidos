@@ -9,7 +9,9 @@ const client = require("prom-client");
 
 const PORT = Number(process.env.PORT || 8003);
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://guest:guest@rabbitmq:5672";
+const RABBITMQ_URL = process.env.RABBITMQ_HOST
+  ? `amqp://${encodeURIComponent(process.env.RABBITMQ_USER)}:${encodeURIComponent(process.env.RABBITMQ_PASSWORD)}@${process.env.RABBITMQ_HOST}:5672${encodeURIComponent(process.env.RABBITMQ_VHOST)}`
+  : (process.env.RABBITMQ_URL || "amqp://guest:guest@rabbitmq:5672");
 
 const QUEUE_NAME = process.env.QUEUE_NAME || 'order_notifications';
 
