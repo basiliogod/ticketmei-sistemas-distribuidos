@@ -18,7 +18,7 @@ spec:
         runAsUser: 1000
       containers:
       - name: api-gateway
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/api-gateway:a1ab6e6cec56e7ad67fd9c2ab309a48fe42cd167
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/api-gateway:2a1c4b2138dede1f5dba0fe98e7879672059455a
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
