@@ -7,13 +7,18 @@ const successfulRequests = new Counter('successful_requests');
 const rateLimitedRequests = new Counter('rate_limited_requests_429');
 
 export const options = {
-  stages: [
-    { duration: '30s', target: 20 },
-    { duration: '30s', target: 80 },
-    { duration: '30s', target: 0 },
-  ],
+  scenarios: {
+    rate_limit_stress: {
+      executor: 'constant-arrival-rate',
+      rate: 125,              
+      timeUnit: '1s',
+      duration: '1m',         
+      preAllocatedVUs: 100,
+      maxVUs: 300,
+    },
+  },
   thresholds: {
-    http_req_duration: ['p(95)<200'],
+    rate_limited_requests_429: ['count>1000'],
   },
 };
 
@@ -34,7 +39,7 @@ export default function () {
     'GET /events status 429 (Rate Limited)': (r) => r.status === 429,
   });
 
-  sleep(0.5);
+  sleep(0.05);
 
   // 2. Pedido POST de criação de encomenda
   const payloadOrder = JSON.stringify({
@@ -51,16 +56,16 @@ export default function () {
 
   const resOrder = http.post(`${BASE_URL}/orders`, payloadOrder, params);
 
-  if (resOrder.status === 202) {
+  if (resOrder.status === 201 || resOrder.status === 202) {
     successfulRequests.add(1);
   } else if (resOrder.status === 429) {
     rateLimitedRequests.add(1);
   }
 
   check(resOrder, {
+    'POST /orders status 201 (Created)': (r) => r.status === 201,
     'POST /orders status 202 (Accepted)': (r) => r.status === 202,
     'POST /orders status 429 (Rate Limited)': (r) => r.status === 429,
   });
 
-  sleep(0.5);
 }
