@@ -18,7 +18,7 @@ spec:
         runAsUser: 1000
       containers:
       - name: order
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/order:a1ab6e6cec56e7ad67fd9c2ab309a48fe42cd167
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/order:d17185e7cf5f896e76077f21158f464a1f2fc027
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
