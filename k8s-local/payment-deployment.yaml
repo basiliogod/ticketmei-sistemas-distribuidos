@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: payment
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/payment:2a75dd7c6dcaae39eafcfda214a41ea83f1c0378
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/payment:9bd05982708706c9cfbe0d8803a3f386bf2746c7
         ports:
         - containerPort: 8004
         env:
