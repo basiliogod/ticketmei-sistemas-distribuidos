@@ -51,10 +51,10 @@ spec:
               key: password
         resources:
           requests:
-            cpu: 50m
+            cpu: 25m
             memory: 64Mi
           limits:
-            cpu: 250m
+            cpu: 200m
             memory: 128Mi
 ---
 apiVersion: v1

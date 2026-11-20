@@ -28,10 +28,10 @@ spec:
               key: RABBITMQ_URL
         resources:
           requests:
-            cpu: 25m
+            cpu: 15m
             memory: 64Mi
           limits:
-            cpu: 250m
+            cpu: 100m
             memory: 128Mi      
       initContainers:
       - name: wait-for-rabbitmq

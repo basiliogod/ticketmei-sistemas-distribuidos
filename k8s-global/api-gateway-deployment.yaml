@@ -47,10 +47,10 @@ spec:
               key: REDIS_URL
         resources:
           requests:
-            cpu: 50m
+            cpu: 25m
             memory: 64Mi
           limits:
-            cpu: 500m
+            cpu: 200m
             memory: 256Mi
 ---
 apiVersion: v1
