@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ticketmei-global
+  namespace: argocd
+spec:
+  project: grupo09
+  source:
+    repoURL: 'https://github.com/basiliogod/ticketmei-sistemas-distribuidos.git'
+    targetRevision: HEAD
+    path: k8s-global
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: grupo09
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
