@@ -9,9 +9,20 @@ const client = require("prom-client");
 
 const PORT = Number(process.env.PORT || 8003);
 
-const RABBITMQ_URL = process.env.RABBITMQ_HOST
-  ? `amqp://${encodeURIComponent(process.env.RABBITMQ_USER)}:${encodeURIComponent(process.env.RABBITMQ_PASSWORD)}@${process.env.RABBITMQ_HOST}:5672${encodeURIComponent(process.env.RABBITMQ_VHOST)}`
-  : (process.env.RABBITMQ_URL || "amqp://guest:guest@rabbitmq:5672");
+function getRabbitMQUrl() {
+  if (process.env.RABBITMQ_HOST) {
+    const user = encodeURIComponent(process.env.RABBITMQ_USER || '');
+    const pass = encodeURIComponent(process.env.RABBITMQ_PASSWORD || '');
+    const host = process.env.RABBITMQ_HOST;
+    const rawVhost = process.env.RABBITMQ_VHOST || '/';
+    const vhostClean = rawVhost.replace(/^\//, '');
+    const vhostPath = vhostClean ? `/%2F${encodeURIComponent(vhostClean)}` : '';
+    return `amqp://${user}:${pass}@${host}:5672${vhostPath}`;
+  }
+  return process.env.RABBITMQ_URL || "amqp://guest:guest@rabbitmq:5672";
+}
+
+const RABBITMQ_URL = getRabbitMQUrl();
 
 const QUEUE_NAME = process.env.QUEUE_NAME || 'order_notifications';
 

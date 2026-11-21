@@ -9,9 +9,21 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8002;
 const PAYMENT_URL = process.env.PAYMENT_URL || 'http://payment:8004';
-const RABBITMQ_URL = process.env.RABBITMQ_HOST
-  ? `amqp://${encodeURIComponent(process.env.RABBITMQ_USER)}:${encodeURIComponent(process.env.RABBITMQ_PASSWORD)}@${process.env.RABBITMQ_HOST}:5672${encodeURIComponent(process.env.RABBITMQ_VHOST)}`
-  : (process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672');
+
+function getRabbitMQUrl() {
+  if (process.env.RABBITMQ_HOST) {
+    const user = encodeURIComponent(process.env.RABBITMQ_USER || '');
+    const pass = encodeURIComponent(process.env.RABBITMQ_PASSWORD || '');
+    const host = process.env.RABBITMQ_HOST;
+    const rawVhost = process.env.RABBITMQ_VHOST || '/';
+    const vhostClean = rawVhost.replace(/^\//, '');
+    const vhostPath = vhostClean ? `/%2F${encodeURIComponent(vhostClean)}` : '';
+    return `amqp://${user}:${pass}@${host}:5672${vhostPath}`;
+  }
+  return process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672';
+}
+
+const RABBITMQ_URL = getRabbitMQUrl();
 
 const EXCHANGE_NAME = 'orders.exchange';
 const QUEUE_NAME = 'order_notifications';
