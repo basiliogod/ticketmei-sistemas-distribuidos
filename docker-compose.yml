@@ -153,6 +153,7 @@ services:
       - BASE_URL=http://host.docker.internal:8000
       - PAYMENT_URL=http://host.docker.internal:8004
       - INVENTORY_URL=http://host.docker.internal:8005
+      - ORDER_URL=http://host.docker.internal:8002
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: run load-test.js
