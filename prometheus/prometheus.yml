@@ -20,7 +20,11 @@ scrape_configs:
 
   - job_name: 'payment'
     static_configs:
-      - targets: ['payment:8004']    
+      - targets: ['payment:8004'] 
+
+  - job_name: 'inventory'
+    static_configs:
+      - targets: ['inventory:8005']
 
   - job_name: 'rabbitmq'
     static_configs:

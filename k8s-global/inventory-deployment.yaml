@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  namespace: grupo09
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: inventory
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/inventory:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 8005
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: INVENTORY_PORT
+        resources:
+          requests:
+            cpu: 15m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory
+  namespace: grupo09
+  labels:
+    app: inventory
+spec:
+  type: ClusterIP
+  selector:
+    app: inventory
+  ports:
+  - name: metrics
+    port: 8005
+    targetPort: 8005
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: inventory-monitor
+  namespace: grupo09
+  labels:
+    release: kube-prometheus-stack-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: inventory
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 60s
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scrape-inventory
+  namespace: grupo09
+spec:
+  podSelector:
+    matchLabels:
+      app: inventory
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8005

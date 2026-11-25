@@ -49,6 +49,11 @@ spec:
             secretKeyRef:
               name: grupo09-user-user-credentials
               key: password
+        - name: INVENTORY_URL
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: INVENTORY_URL
         resources:
           requests:
             cpu: 25m

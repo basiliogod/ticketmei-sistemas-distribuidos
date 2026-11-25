@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  namespace: ticketmei
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      containers:
+      - name: inventory
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/inventory:latest
+        ports:
+        - containerPort: 8005
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: INVENTORY_PORT
+        resources:
+          requests:
+            cpu: 15m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory
+  namespace: ticketmei
+spec:
+  type: ClusterIP
+  selector:
+    app: inventory
+  ports:
+  - port: 8005
+    targetPort: 8005

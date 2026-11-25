@@ -31,6 +31,11 @@ spec:
             configMapKeyRef:
               name: service-env
               key: RABBITMQ_URL
+        - name: INVENTORY_URL
+          valueFrom:
+            configMapKeyRef:
+              name: service-env
+              key: INVENTORY_URL
         resources:
           requests:
             cpu: 25m

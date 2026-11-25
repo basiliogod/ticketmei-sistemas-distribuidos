@@ -31,7 +31,9 @@ jobs:
             notification:
               - 'notification/**'
             payment:
-              - 'payment/**'  
+              - 'payment/**' 
+            inventory:
+              - 'inventory/**' 
 
   build-and-push:
     needs: detect-changes

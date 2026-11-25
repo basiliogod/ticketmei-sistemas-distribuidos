@@ -41,6 +41,16 @@ services:
     networks:
       - ticketmei-net
 
+  inventory:
+    build: ./inventory
+    container_name: inventory
+    ports:
+      - "8005:8005"
+    environment:
+      - PORT=8005
+    networks:
+      - ticketmei-net
+
   order:
     build: ./order
     container_name: order
@@ -50,10 +60,13 @@ services:
       - PORT=8002
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - PAYMENT_URL=http://payment:8004
+      - INVENTORY_URL=http://inventory:8005
     depends_on:
       rabbitmq:
         condition: service_healthy
       payment:
+        condition: service_started
+      inventory:
         condition: service_started
     networks:
       - ticketmei-net    
@@ -139,6 +152,7 @@ services:
     environment:
       - BASE_URL=http://host.docker.internal:8000
       - PAYMENT_URL=http://host.docker.internal:8004
+      - INVENTORY_URL=http://host.docker.internal:8005
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: run load-test.js
