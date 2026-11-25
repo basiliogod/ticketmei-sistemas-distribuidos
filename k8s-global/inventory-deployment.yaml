@@ -18,7 +18,7 @@ spec:
         runAsUser: 1000
       containers:
       - name: inventory
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/inventory:latest
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/inventory:11ece755f6d34f4b8783ccd17b58e4a498a4eebd
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:

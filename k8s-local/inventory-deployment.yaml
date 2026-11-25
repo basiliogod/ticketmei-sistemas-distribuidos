@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: inventory
-        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/inventory:latest
+        image: ghcr.io/basiliogod/ticketmei-sistemas-distribuidos/inventory:11ece755f6d34f4b8783ccd17b58e4a498a4eebd
         ports:
         - containerPort: 8005
         env:
